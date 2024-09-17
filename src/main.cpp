@@ -1,5 +1,6 @@
 #include <Arduino.h>
-#include <avr/delay.h>
+#include <digital_out.h>
+#include <util/delay.h>
 
 // State macros
 #define IDLE 1
@@ -28,24 +29,28 @@ void set_state(int new_state) {
 }
 
 int main() {
+  init();
   int command = 0;
+  Digital_out led(5);
 
   Serial.begin(9600); // Open serial port with baud rate 9600
+  Serial.flush();
 
   while (1) {
     if (Serial.available() > 0) {
       // read the incoming byte:
+      led.toggle();
       command = Serial.read();
 
       switch (state) {
       case IDLE:
-        if (command == TOO_COOL) {
+        if (command == TOO_HOT) {
           set_state(COOLER_STARTUP);
           _delay_ms(2000); // Compressor running
           set_state(COOLER_READY);
           _delay_ms(2000); // Fan running
           set_state(COOLER_RUNNING);
-        } else if (command == TOO_HOT)
+        } else if (command == TOO_COOL)
           set_state(HEATING);
         break;
       case HEATING:
