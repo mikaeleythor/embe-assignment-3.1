@@ -1,0 +1,13 @@
+---
+title: Heater-cooler example
+---
+stateDiagram-v2
+    [*] --> Idle
+    Heating : Heating\n---\nEntry/Startup\nExit/Shutdown
+    Idle --> Heating : Too cool [restart time >= 5mins]
+    Heating --> Idle : ok
+    Failure : Failure\n---\nEntry/start alarm\nExit/stop alarm
+    Heating --> Failure : failure
+    Idle --> Cooling : too hot
+    Cooling --> Idle : ok
+    Cooling --> Failure : failure
